@@ -22,6 +22,9 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * The controller that stores the implementation of all event-related queries.
+ */
 @CrossOrigin(origins = "*", methods = {RequestMethod.PUT,RequestMethod.DELETE,RequestMethod.POST,RequestMethod.OPTIONS,RequestMethod.GET})
 @RestController
 @RequestMapping("/api/event")
@@ -46,8 +49,8 @@ public class EventController {
     @Autowired
     JwtUtils jwtUtils;
 
-    /**
-     * @return
+    /**  A GET query that returns all events. Request requiring JWT.
+     * @return List<Event>
      */
     @GetMapping("/")
     public List<Event> getAllEvent(Authentication authentication) {
@@ -61,6 +64,10 @@ public class EventController {
         return events;
     }
 
+    /**  A GET query returning events joined by a user saved in JWT. Request requiring JWT.
+     * @param authentication
+     * @return List<Event>
+     */
     @GetMapping("/joined")
     public List<Event> getJoinedEvent( Authentication authentication) {
         Long user_id = ((UserDetailsImpl) authentication.getPrincipal()).getId();
@@ -73,6 +80,11 @@ public class EventController {
         return events;
 //        return eventRepository.findJoinEvents(((UserDetailsImpl) authentication.getPrincipal()).getId());
     }
+
+    /** Request requiring JWT. A GET query returning events created by a user saved in JWT.
+     * @param authentication
+     * @return List<Event>
+     */
     @GetMapping("/toedit")
     public List<Event> getEventToEdit( Authentication authentication) {
         Long user_id = ((UserDetailsImpl) authentication.getPrincipal()).getId();
@@ -86,24 +98,11 @@ public class EventController {
 //        return eventRepository.findEventsToEdit(((UserDetailsImpl) authentication.getPrincipal()).getId());
     }
 
-    /**
-     * @param id
-     * @return
-     * @throws Exception
-     */
-    @GetMapping("/user/{id}")
-    public List<Event> retriveAllUsersEvent(@PathVariable Long id) throws Exception {
-        Optional<User> userOptional = userRepository.findById(id);
-        if (!userOptional.isPresent()) {
-            throw new Exception("id: " + id);
-        }
-        return userOptional.get().getMyEvents();
-    }
 
-    /**
+    /** POST query that adds an event and assigns an owner to it as a user saved in the JWT. Request requiring JWT.
      * @param addEventRequest
      * @param authentication
-     * @return
+     * @return MessageResponse
      */
     @PostMapping("/")
     public MessageResponse addEvent(@Valid @RequestBody AddEventRequest addEventRequest, Authentication authentication) {
@@ -121,10 +120,10 @@ public class EventController {
         return new MessageResponse("Add successfully completed.");
     }
 
-    /**
+    /** PUT query updating the event. Request requiring JWT.
      * @param updateEventRequest
      * @param authentication
-     * @return
+     * @return MessageResponse
      */
     @PutMapping("/")
     public MessageResponse updateEvent(@Valid @RequestBody UpdateEventRequest updateEventRequest, Authentication authentication) {
@@ -143,8 +142,13 @@ public class EventController {
         return new MessageResponse("Update successfully completed.");
     }
 
-    @DeleteMapping("/{someID}")
-    public @ResponseBody MessageResponse deleteEvent(@PathVariable(value="someID") Long id,  Authentication authentication) {
+    /** DELETE query to delete an event. Request requiring JWT.
+     * @param id
+     * @param authentication
+     * @return MessageResponse
+     */
+    @DeleteMapping("/{ID}")
+    public @ResponseBody MessageResponse deleteEvent(@PathVariable(value="ID") Long id,  Authentication authentication) {
 
         Long user_id = ((UserDetailsImpl) authentication.getPrincipal()).getId();
 
@@ -153,6 +157,13 @@ public class EventController {
         return new MessageResponse("Delete successfully completed.");
     }
 
+    /**
+     * PUT query that adds a participant who is a user registered in JWT to the event.
+     * Request requiring JWT.
+     * @param updateEventRequest
+     * @param authentication
+     * @return MessageResponse
+     */
     @PutMapping("/join")
     public MessageResponse joinEvent(@Valid @RequestBody UpdateEventRequest updateEventRequest, Authentication authentication) {
 
@@ -173,6 +184,13 @@ public class EventController {
         return new MessageResponse("Update successfully completed.");
     }
 
+    /**
+     * Zapytanie typu PUT usuwające z wydarzenia uczestnika, który jest użytkownikiem zapisanym w JWT.
+     * Zapytanie wymagające JWT.
+     * @param updateEventRequest
+     * @param authentication
+     * @return MessageResponse
+     */
     @PutMapping("/resign")
     public MessageResponse resignEvent(@Valid @RequestBody UpdateEventRequest updateEventRequest, Authentication authentication) {
 
