@@ -8,12 +8,12 @@
         <version>2.6.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.example</groupId>
-    <artifactId>jwt-postgress-spring</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <groupId>backend</groupId>
+    <artifactId>eventa</artifactId>
+    <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
-    <name>jwt-postgress-spring</name>
-    <description>jwt-postgress-spring</description>
+    <name>eventa</name>
+    <description>eventa</description>
     <properties>
         <java.version>11</java.version>
     </properties>
